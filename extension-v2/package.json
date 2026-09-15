@@ -1,0 +1,24 @@
+{
+  "name": "copiloto-qs-extensao",
+  "version": "2.0.0",
+  "private": true,
+  "description": "Copiloto QS — extensão Chrome MV3 de produção (Grupo Inovvatur)",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "npm run icones && tsc --noEmit && vite build",
+    "typecheck": "tsc --noEmit",
+    "icones": "node scripts/gerar-icones.mjs",
+    "empacotar": "npm run build && node scripts/empacotar.mjs"
+  },
+  "dependencies": {},
+  "devDependencies": {
+    "@crxjs/vite-plugin": "^2.7.1",
+    "@types/chrome": "^0.2.9",
+    "typescript": "^5.9.3",
+    "vite": "^7.3.6"
+  },
+  "engines": {
+    "node": ">=20.19"
+  }
+}

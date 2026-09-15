@@ -1,0 +1,117 @@
+<!doctype html>
+<html lang="pt-BR">
+<meta charset="utf-8" />
+<title>Simulador de Lead — Copiloto QS</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font: 15px/1.55 system-ui, -apple-system, sans-serif;
+    background: #0D1B4B; color: #fff; min-height: 100vh;
+    display: flex; align-items: center; justify-content: center; padding: 32px;
+  }
+  main { width: 100%; max-width: 620px; }
+  h1 { font-size: 22px; margin-bottom: 4px; }
+  .sub { opacity: .65; font-size: 14px; margin-bottom: 24px; }
+  .aviso {
+    background: rgba(255,255,255,.08); border-left: 3px solid #2E6BFF;
+    padding: 12px 16px; border-radius: 6px; font-size: 13px; margin-bottom: 24px;
+  }
+  .linha {
+    display: flex; align-items: center; gap: 12px; padding: 12px 14px;
+    background: rgba(255,255,255,.06); border-radius: 10px; margin-bottom: 8px;
+    transition: background .2s;
+  }
+  .linha.tocando { background: #1A55FF; }
+  .linha button {
+    width: 34px; height: 34px; border-radius: 50%; border: none; flex-shrink: 0;
+    background: #fff; color: #0D1B4B; font-size: 13px; cursor: pointer;
+  }
+  .txt { flex: 1; font-size: 14px; }
+  .cat { font-size: 10px; text-transform: uppercase; letter-spacing: .08em; opacity: .6; }
+  .barra { display: flex; gap: 10px; margin: 24px 0 12px; }
+  .barra button {
+    flex: 1; padding: 14px; border: none; border-radius: 10px;
+    background: #2E6BFF; color: #fff; font: 600 15px system-ui; cursor: pointer;
+  }
+  .barra button.sec { background: rgba(255,255,255,.14); }
+</style>
+
+<main>
+  <h1>Simulador de Lead</h1>
+  <p class="sub">Esta aba faz o papel do cliente. O copiloto vai escutar daqui.</p>
+
+  <div class="aviso">
+    <strong>Como usar:</strong> clique em <b>🎙️ Copiloto</b> (canto inferior direito),
+    depois em <b>Tocar tudo</b>. As frases vão sair no áudio desta aba — exatamente
+    como se o lead estivesse falando numa call.
+  </div>
+
+  <div class="barra">
+    <button id="tudo">▶ Tocar tudo</button>
+    <button id="parar" class="sec">■ Parar</button>
+  </div>
+
+  <div id="lista"></div>
+</main>
+
+<script>
+const FRASES = [
+  ["01-preco", "Preço", "Achei meio caro esse pacote, está acima do que eu imaginava."],
+  ["02-esposa", "Decisor", "Vou falar com a minha esposa e depois eu te retorno."],
+  ["03-parcelar", "Parcelamento", "Dá para parcelar em quantas vezes?"],
+  ["04-whatsapp", "WhatsApp — fuga", "Me manda no WhatsApp que eu vejo depois."],
+  ["05-cancelar", "Cancelamento", "E se eu precisar cancelar, como fica?"],
+  ["06-concorrente", "Concorrente", "Eu vi bem mais barato no site do hotel."],
+  ["07-dolar", "Câmbio", "O dólar está muito alto agora."],
+  ["08-fechar", "Sinal de compra", "Como faço para fechar? Quero garantir logo."],
+  ["09-pesquisando", "Só pesquisando", "Na verdade eu só estou pesquisando ainda."],
+  ["10-confianca", "Confiança", "Nunca ouvi falar de vocês. Como sei que é seguro?"],
+];
+
+const lista = document.getElementById("lista");
+const audios = [];
+
+FRASES.forEach(([arquivo, categoria, texto], i) => {
+  const div = document.createElement("div");
+  div.className = "linha";
+  div.innerHTML = `
+    <button data-i="${i}">▶</button>
+    <div class="txt"><span class="cat">${categoria}</span>${texto}</div>
+  `;
+  lista.appendChild(div);
+
+  const audio = new Audio(`/audio/${arquivo}.m4a`);
+  audio.addEventListener("play", () => div.classList.add("tocando"));
+  audio.addEventListener("ended", () => div.classList.remove("tocando"));
+  audio.addEventListener("pause", () => div.classList.remove("tocando"));
+  audios.push(audio);
+
+  div.querySelector("button").addEventListener("click", () => {
+    pararTudo();
+    audio.play();
+  });
+});
+
+function pararTudo() {
+  audios.forEach((a) => { a.pause(); a.currentTime = 0; });
+  sequencia = null;
+}
+
+let sequencia = null;
+document.getElementById("tudo").addEventListener("click", async () => {
+  pararTudo();
+  const id = {};
+  sequencia = id;
+  for (const audio of audios) {
+    if (sequencia !== id) return;
+    audio.currentTime = 0;
+    await audio.play();
+    await new Promise((r) => audio.addEventListener("ended", r, { once: true }));
+    // pausa entre frases, dá tempo do copiloto processar e exibir
+    await new Promise((r) => setTimeout(r, 2500));
+  }
+});
+
+document.getElementById("parar").addEventListener("click", pararTudo);
+</script>
+</html>

@@ -1,0 +1,49 @@
+diff --git a/src/components/sdr/types.ts b/src/components/sdr/types.ts
+index bcc2e7d..14ba5f7 100644
+--- a/src/components/sdr/types.ts
++++ b/src/components/sdr/types.ts
+@@ -15,6 +15,15 @@ export type TaskStatus = "pendente" | "concluida" | "ignorada" | "atrasada";
+ export type GoalType = "ganhos" | "leads_finalizados" | "atividades" | "conversao";
+ export type GoalPeriod = "diario" | "mensal";
+ export type MeetingStatus = "agendada" | "realizada" | "no_show" | "cancelada";
++// Desfecho comercial da reunião (≠ status, que é logístico). Ver sql/005_alter_qs_meetings.sql
++export type MeetingOutcome =
++  | "fechou"
++  | "proposta_enviada"
++  | "follow_up"
++  | "sem_interesse"
++  | "no_show"
++  | "remarcada"
++  | "outro";
+ export type CustomFieldScope = "pessoal" | "empresa" | "contato";
+ 
+ export interface SdrUser {
+@@ -142,6 +151,11 @@ export interface Meeting {
+   scheduled_at: string;
+   status: MeetingStatus;
+   created_at: string;
++  // Colunas adicionadas por sql/005_alter_qs_meetings.sql (todas opcionais/NULL)
++  meeting_url?: string | null;
++  duration_seconds?: number | null;
++  outcome?: MeetingOutcome | null;
++  copilot_call_id?: string | null;
+ }
+ 
+ export interface Contact {
+@@ -252,6 +266,16 @@ export const MEETING_STATUS_LABELS: Record<MeetingStatus, string> = {
+   cancelada: "Cancelada",
+ };
+ 
++export const MEETING_OUTCOME_LABELS: Record<MeetingOutcome, string> = {
++  fechou: "Fechou",
++  proposta_enviada: "Proposta enviada",
++  follow_up: "Follow-up",
++  sem_interesse: "Sem interesse",
++  no_show: "No-show",
++  remarcada: "Remarcada",
++  outro: "Outro",
++};
++
+ export const SOURCE_LABELS: Record<LeadSource, string> = {
+   manual: "Manual",
+   api: "API",

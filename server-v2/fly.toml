@@ -1,0 +1,66 @@
+# Copiloto QS — gateway · Fly.io região gru (São Paulo)
+#
+# Decisões (ver squad/05-INFRA-CUSTOS-devops.md):
+#   • min_machines_running = 2 e auto_stop_machines = "off": NUNCA scale-to-zero
+#     em copiloto ao vivo. O que dimensiona é disponibilidade, não carga.
+#   • kill_timeout: o Fly limita a 300 s. A drenagem de 45 min de uma máquina
+#     com call ativa é feita por scripts/drenar-maquina.sh (chama /internal/drain,
+#     espera zero sessões, só então remove). O CI bloqueia deploy com sessão ativa.
+#   • Health check em /health: em drenagem devolve 503 e o proxy para de rotear.
+
+app = "inovvatur-copiloto-api"
+primary_region = "gru"
+kill_signal = "SIGTERM"
+kill_timeout = "300s"
+
+[build]
+  dockerfile = "Dockerfile"
+
+[env]
+  NODE_ENV = "production"
+  PORT = "8787"
+  HOST = "0.0.0.0"
+  LOG_LEVEL = "info"
+  DEEPGRAM_MODEL = "nova-3"
+  # VALIDADO: pt-BR não funciona no Deepgram. nova-3 + multi.
+  DEEPGRAM_LANGUAGE = "multi"
+  DB_MODO = "postgres"
+  DRENAGEM_MAX_MS = "2700000"
+  # Segredos via `fly secrets set`: DEEPGRAM_API_KEY ANTHROPIC_API_KEY EMBEDDINGS_API_KEY
+  #   DATABASE_URL JWT_SEGREDO SUPABASE_JWT_SECRET INTERNAL_TOKEN METRICS_TOKEN EXTENSAO_ORIGENS QS_ORIGEM
+
+[deploy]
+  strategy = "bluegreen"
+  wait_timeout = "10m"
+
+[http_service]
+  internal_port = 8787
+  force_https = true
+  auto_stop_machines = "off"
+  auto_start_machines = true
+  min_machines_running = 2
+  processes = ["app"]
+
+  [http_service.concurrency]
+    type = "connections"
+    soft_limit = 40
+    hard_limit = 60
+
+  [[http_service.checks]]
+    grace_period = "15s"
+    interval = "10s"
+    method = "GET"
+    path = "/health"
+    protocol = "http"
+    timeout = "2s"
+
+[[vm]]
+  size = "performance-2x"
+  cpu_kind = "performance"
+  cpus = 2
+  memory = "4gb"
+
+# O Fly raspa /metrics pela rede privada (6PN). O gateway libera IPs fdaa:: sem token.
+[metrics]
+  port = 8787
+  path = "/metrics"

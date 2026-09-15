@@ -1,0 +1,82 @@
+{
+  "manifest_version": 3,
+  "name": "Copiloto QS",
+  "version": "2.0.0",
+  "description": "Copiloto de vendas em tempo real para calls de fechamento — Grupo Inovvatur.",
+  "minimum_chrome_version": "116",
+  "icons": {
+    "16": "icones/icone-16.png",
+    "32": "icones/icone-32.png",
+    "48": "icones/icone-48.png",
+    "128": "icones/icone-128.png"
+  },
+  "permissions": [
+    "tabCapture",
+    "offscreen",
+    "activeTab",
+    "scripting",
+    "storage"
+  ],
+  "host_permissions": [
+    "http://localhost:8787/*",
+    "https://gw.qs.inovvatur.com.br/*"
+  ],
+  "background": {
+    "service_worker": "src/background/service-worker.ts",
+    "type": "module"
+  },
+  "action": {
+    "default_title": "Copiloto QS — clique ou ⌘⇧K para ativar nesta call"
+  },
+  "options_page": "src/opcoes/opcoes.html",
+  "web_accessible_resources": [
+    {
+      "resources": ["pcm-worklet.js"],
+      "matches": ["<all_urls>"]
+    }
+  ],
+  "commands": {
+    "_execute_action": {
+      "suggested_key": {
+        "default": "Ctrl+Shift+K",
+        "mac": "Command+Shift+K"
+      },
+      "description": "Ativar ou parar o Copiloto nesta call"
+    },
+    "marcar-usei": {
+      "suggested_key": {
+        "default": "Ctrl+Shift+U",
+        "mac": "Command+Shift+U"
+      },
+      "description": "Marcar a sugestão atual como 'usei'"
+    },
+    "marcar-nao-serviu": {
+      "suggested_key": {
+        "default": "Ctrl+Shift+J",
+        "mac": "Command+Shift+J"
+      },
+      "description": "Marcar a sugestão atual como 'não serviu'"
+    },
+    "silenciar": {
+      "suggested_key": {
+        "default": "Ctrl+Shift+M",
+        "mac": "Command+Shift+M"
+      },
+      "description": "Silenciar o Copiloto por 5 minutos"
+    }
+  },
+  "content_scripts": [
+    {
+      "matches": [
+        "https://meet.google.com/*",
+        "https://*.zoom.us/wc/*",
+        "https://app.zoom.us/*",
+        "https://teams.microsoft.com/*",
+        "https://teams.live.com/*"
+      ],
+      "js": ["src/conteudo/lembrete.ts"],
+      "run_at": "document_idle",
+      "all_frames": false
+    }
+  ]
+}

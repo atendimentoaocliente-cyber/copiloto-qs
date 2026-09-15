@@ -1,0 +1,88 @@
+<!doctype html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Copiloto QS — configuração</title>
+    <link rel="stylesheet" href="./opcoes.css" />
+  </head>
+  <body>
+    <main>
+      <header class="topo">
+        <div class="marca"></div>
+        <div>
+          <h1>Copiloto QS</h1>
+          <p class="sub">Grupo Inovvatur · extensão <span id="versao"></span></p>
+        </div>
+      </header>
+
+      <!-- 1. Pareamento -->
+      <section id="sec-pareamento" class="cartao">
+        <h2>1. Ligar ao seu usuário do QS</h2>
+        <div id="pareado" hidden>
+          <p class="ok">Pareado como <b id="nome-usuario"></b> <span id="papel-usuario" class="etiqueta"></span></p>
+          <p class="fraca">Pareado em <span id="pareado-em"></span> · credencial válida por mais <b id="dias-restantes"></b> dias.</p>
+          <div class="acoes">
+            <button id="desparear" class="btn">Desconectar este Chrome</button>
+          </div>
+        </div>
+        <div id="nao-pareado">
+          <p>No QS, abra <b>Configurações → Copiloto → Gerar código</b>. O código vale por 10 minutos e só funciona uma vez.</p>
+          <form id="form-pareamento" class="linha">
+            <input id="codigo" inputmode="numeric" pattern="[0-9]{6}" maxlength="6" placeholder="000000" autocomplete="one-time-code" required />
+            <button type="submit" id="parear" class="btn primario">Parear</button>
+          </form>
+          <p id="resultado-pareamento" class="resultado"></p>
+        </div>
+      </section>
+
+      <!-- 2. Microfone -->
+      <section class="cartao">
+        <h2>2. Liberar o microfone</h2>
+        <p>O copiloto precisa ouvir a sua voz para separar o que você falou do que o lead falou. É pedido uma única vez.</p>
+        <div class="acoes">
+          <button id="pedir-microfone" class="btn primario">Autorizar microfone</button>
+          <span id="estado-microfone" class="resultado"></span>
+        </div>
+      </section>
+
+      <!-- 3. Atalhos -->
+      <section class="cartao">
+        <h2>3. Atalhos</h2>
+        <table class="atalhos">
+          <tr><td><kbd id="atalho-ativar"></kbd></td><td>Ativar / parar o copiloto na aba da call</td></tr>
+          <tr><td><kbd id="atalho-usei"></kbd></td><td>Marcar "usei" na sugestão atual</td></tr>
+          <tr><td><kbd id="atalho-nao-serviu"></kbd></td><td>Marcar "não serviu"</td></tr>
+          <tr><td><kbd id="atalho-silenciar"></kbd></td><td>Silenciar por 5 minutos</td></tr>
+          <tr><td><kbd>Ctrl + ↵</kbd> · <kbd>Ctrl + ⌫</kbd> · <kbd>Ctrl + Espaço</kbd></td><td>Os mesmos três, quando o painel está em foco</td></tr>
+        </table>
+        <p class="fraca">Para trocar as teclas: <code>chrome://extensions/shortcuts</code>.</p>
+      </section>
+
+      <!-- 4. Preferências -->
+      <section class="cartao">
+        <h2>4. Painel</h2>
+        <label class="opcao"><input type="checkbox" id="pref-fonte-grande" /> <span>Fonte grande <small>frase a 26px, teto de 52 caracteres</small></span></label>
+        <label class="opcao"><input type="checkbox" id="pref-modo-minimo" /> <span>Modo mínimo <small>esconde âncora, alternativa e fila — para quem já passou de 50 calls</small></span></label>
+        <label class="opcao"><input type="checkbox" id="pref-sem-transicoes" /> <span>Transições instantâneas <small>sem fade de entrada do card</small></span></label>
+      </section>
+
+      <!-- 5. Avançado -->
+      <details class="cartao">
+        <summary>Avançado — servidor do gateway</summary>
+        <p class="fraca">Só mude se o time técnico pedir. Padrão: <code id="gateway-padrao"></code></p>
+        <form id="form-gateway" class="linha">
+          <input id="gateway" type="url" placeholder="https://gw.qs.inovvatur.com.br" />
+          <button type="submit" class="btn">Salvar</button>
+          <button type="button" id="testar-gateway" class="btn">Testar</button>
+        </form>
+        <p id="resultado-gateway" class="resultado"></p>
+      </details>
+
+      <footer class="fraca">
+        A extensão nunca guarda áudio e nunca fala com o banco de dados diretamente. Tudo passa pelo gateway da Inovvatur, com a credencial deste pareamento.
+      </footer>
+    </main>
+    <script type="module" src="./opcoes.ts"></script>
+  </body>
+</html>

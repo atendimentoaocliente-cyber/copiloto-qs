@@ -1,0 +1,22 @@
+diff --git a/src/lib/qs/queries.ts b/src/lib/qs/queries.ts
+index 7370371..8b822ec 100644
+--- a/src/lib/qs/queries.ts
++++ b/src/lib/qs/queries.ts
+@@ -241,10 +241,16 @@ export async function handoverLead(
+       });
+     if (handoverError) throw handoverError;
+ 
++    // FIX F-3: "qualificado" não existe em LeadStatus e corrompia toda métrica
++    // de conversão (o lead sumia de fetchLeadsCoverage e do dashboard).
++    // Após o handover o lead continua em andamento — agora com o closer como
++    // owner. O registro do handover em si fica em qs_handovers.
++    // O banco também rejeita valores fora do tipo (sql/006_fix_handover.sql).
++    const HANDOVER_STATUS: LeadStatus = "em_prospeccao";
+     const { error: leadError } = await supabase
+       .from("qs_leads")
+       .update({
+-        status: "qualificado" as LeadStatus,
++        status: HANDOVER_STATUS,
+         owner_id: toUserId,
+         updated_at: new Date().toISOString(),
+       })

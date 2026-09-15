@@ -1,0 +1,229 @@
+<!doctype html>
+<html lang="pt-BR">
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Copiloto QS — Calls</title>
+<style>
+  :root {
+    --azul: #0D1B4B; --azul-vivo: #1A55FF; --azul-claro: #2E6BFF;
+    --tinta: #101828; --suave: #667085; --linha: #EAECF0; --fundo: #F8F9FA;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font: 15px/1.55 system-ui, -apple-system, sans-serif;
+    background: var(--fundo); color: var(--tinta); }
+
+  header { background: linear-gradient(120deg, #0D1B4B, #1A55FF 60%, #2E6BFF);
+    color: #fff; padding: 28px 24px 24px; }
+  .env { max-width: 1080px; margin: 0 auto; }
+  header h1 { font-size: 22px; font-weight: 700; }
+  header p { opacity: .8; font-size: 14px; margin-top: 2px; }
+
+  nav { max-width: 1080px; margin: 0 auto; padding: 0 24px; display: flex; gap: 4px;
+    border-bottom: 1px solid var(--linha); background: #fff; }
+  nav button { padding: 13px 16px; border: none; background: none; cursor: pointer;
+    font: 600 14px system-ui; color: var(--suave); border-bottom: 2px solid transparent; }
+  nav button.on { color: var(--azul-vivo); border-bottom-color: var(--azul-vivo); }
+
+  main { max-width: 1080px; margin: 0 auto; padding: 24px; }
+
+  .kpis { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+    gap: 12px; margin-bottom: 20px; }
+  .kpi { background: #fff; border: 1px solid rgba(16,24,40,.06); border-radius: 12px;
+    padding: 16px; box-shadow: 0 1px 3px rgba(0,0,0,.04); }
+  .kpi .n { font-size: 26px; font-weight: 700; color: var(--azul); }
+  .kpi .r { font-size: 11px; text-transform: uppercase; letter-spacing: .07em;
+    color: var(--suave); margin-top: 3px; }
+
+  .card { background: #fff; border: 1px solid rgba(16,24,40,.06); border-radius: 12px;
+    padding: 16px 18px; margin-bottom: 10px; box-shadow: 0 1px 3px rgba(0,0,0,.04);
+    cursor: pointer; transition: box-shadow .15s; }
+  .card:hover { box-shadow: 0 4px 14px rgba(0,0,0,.09); }
+  .card h3 { font-size: 15px; font-weight: 600; }
+  .meta { font-size: 13px; color: var(--suave); margin-top: 3px;
+    display: flex; gap: 14px; flex-wrap: wrap; }
+  .tag { display: inline-block; padding: 2px 9px; border-radius: 99px;
+    font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: .05em; }
+  .quente { background: #FEF3F2; color: #B42318; }
+  .morno  { background: #FFFAEB; color: #B54708; }
+  .frio   { background: #EFF8FF; color: #175CD3; }
+  .resumo { margin-top: 10px; padding-top: 10px; border-top: 1px solid var(--linha);
+    font-size: 14px; color: #344054; }
+
+  .barra { display: flex; align-items: center; gap: 10px; margin-bottom: 8px; }
+  .barra .nome { width: 190px; font-size: 14px; flex-shrink: 0; }
+  .barra .trilho { flex: 1; height: 22px; background: var(--linha); border-radius: 6px; overflow: hidden; }
+  .barra .cheio { height: 100%; background: linear-gradient(90deg, #1A55FF, #2E6BFF); }
+  .barra .v { width: 42px; text-align: right; font-weight: 700; font-size: 14px; }
+
+  .vazio { text-align: center; padding: 56px 24px; color: var(--suave); }
+  .vazio strong { display: block; color: var(--tinta); margin-bottom: 6px; font-size: 16px; }
+
+  dialog { border: none; border-radius: 14px; padding: 0; max-width: 760px; width: 92vw;
+    max-height: 86vh; box-shadow: 0 24px 60px rgba(0,0,0,.3); }
+  dialog::backdrop { background: rgba(16,24,40,.5); }
+  .dlg-cab { padding: 18px 22px; border-bottom: 1px solid var(--linha);
+    display: flex; align-items: center; gap: 12px; position: sticky; top: 0; background: #fff; }
+  .dlg-cab h2 { font-size: 17px; flex: 1; }
+  .dlg-cab button { border: none; background: var(--linha); width: 30px; height: 30px;
+    border-radius: 8px; cursor: pointer; font-size: 15px; }
+  .dlg-corpo { padding: 22px; overflow-y: auto; }
+  .bloco { margin-bottom: 20px; }
+  .bloco h4 { font-size: 11px; text-transform: uppercase; letter-spacing: .08em;
+    color: var(--suave); margin-bottom: 6px; }
+  .turno { padding: 7px 0; border-bottom: 1px solid var(--linha); font-size: 14px; }
+  .turno .quem { font-size: 10px; font-weight: 700; text-transform: uppercase;
+    letter-spacing: .07em; display: block; }
+  .turno.lead .quem { color: var(--azul-vivo); }
+  .turno.closer { color: var(--suave); }
+  .turno.closer .quem { color: #98A2B3; }
+  ul { padding-left: 20px; }
+  footer { text-align: center; padding: 28px; color: var(--suave); font-size: 13px; }
+</style>
+
+<header>
+  <div class="env">
+    <h1>Copiloto QS</h1>
+    <p>Inteligência das calls de fechamento · Inovvatur</p>
+  </div>
+</header>
+
+<nav>
+  <button data-aba="calls" class="on">Calls</button>
+  <button data-aba="objecoes">Objeções</button>
+</nav>
+
+<main>
+  <div id="calls"></div>
+  <div id="objecoes" hidden></div>
+</main>
+
+<footer>Copiloto QS · Método MC² · <em>o jogo é do profissionalismo</em></footer>
+
+<dialog id="detalhe">
+  <div class="dlg-cab">
+    <h2 id="d-titulo">Call</h2>
+    <button onclick="detalhe.close()">✕</button>
+  </div>
+  <div class="dlg-corpo" id="d-corpo"></div>
+</dialog>
+
+<script>
+const fmtData = (iso) => new Date(iso).toLocaleString("pt-BR",
+  { day: "2-digit", month: "2-digit", hour: "2-digit", minute: "2-digit" });
+const fmtDur = (ms) => {
+  const s = Math.round(ms / 1000);
+  return `${Math.floor(s / 60)}min ${String(s % 60).padStart(2, "0")}s`;
+};
+const esc = (s) => String(s ?? "").replace(/[<>&]/g, (c) =>
+  ({ "<": "&lt;", ">": "&gt;", "&": "&amp;" }[c]));
+
+document.querySelectorAll("nav button").forEach((b) => {
+  b.addEventListener("click", () => {
+    document.querySelectorAll("nav button").forEach((x) => x.classList.remove("on"));
+    b.classList.add("on");
+    calls.hidden = b.dataset.aba !== "calls";
+    objecoes.hidden = b.dataset.aba !== "objecoes";
+  });
+});
+
+async function carregarCalls() {
+  const lista = await (await fetch("/api/calls")).json();
+
+  if (!lista.length) {
+    calls.innerHTML = `<div class="vazio">
+      <strong>Nenhuma call gravada ainda</strong>
+      Abra o Meet, clique no ícone do Copiloto e conduza uma call.<br>
+      Ao encerrar, ela aparece aqui com resumo e objeções.
+    </div>`;
+    return;
+  }
+
+  const totalMin = lista.reduce((s, c) => s + c.duracaoMs, 0) / 60000;
+  const totalObj = lista.reduce((s, c) => s + c.objecoes, 0);
+  const custo = lista.reduce((s, c) => s + (c.custoBrl ?? 0), 0);
+
+  calls.innerHTML = `
+    <div class="kpis">
+      <div class="kpi"><div class="n">${lista.length}</div><div class="r">Calls</div></div>
+      <div class="kpi"><div class="n">${totalMin.toFixed(0)}</div><div class="r">Minutos</div></div>
+      <div class="kpi"><div class="n">${totalObj}</div><div class="r">Objeções</div></div>
+      <div class="kpi"><div class="n">R$ ${custo.toFixed(2)}</div><div class="r">Custo total</div></div>
+    </div>
+    ${lista.map((c) => {
+      const t = c.resumo?.temperatura ?? "";
+      return `<div class="card" onclick="abrir('${c.id}')">
+        <h3>${fmtData(c.iniciadaEm)} ${t ? `<span class="tag ${t}">${t}</span>` : ""}</h3>
+        <div class="meta">
+          <span>⏱ ${fmtDur(c.duracaoMs)}</span>
+          <span>💬 ${c.totalTurnos} turnos</span>
+          <span>⚡ ${c.objecoes} objeções</span>
+          <span>R$ ${(c.custoBrl ?? 0).toFixed(2)}</span>
+        </div>
+        ${c.resumo?.resumo ? `<div class="resumo">${esc(c.resumo.resumo)}</div>` : ""}
+      </div>`;
+    }).join("")}
+  `;
+}
+
+async function carregarObjecoes() {
+  const lista = await (await fetch("/api/objecoes")).json();
+  if (!lista.length) {
+    objecoes.innerHTML = `<div class="vazio">
+      <strong>Catálogo ainda vazio</strong>
+      Conforme as calls acontecem, as objeções mais frequentes aparecem aqui.<br>
+      É esse ranking que reescreve o playbook.
+    </div>`;
+    return;
+  }
+  const max = lista[0].total;
+  objecoes.innerHTML = `
+    <div class="kpis">
+      <div class="kpi"><div class="n">${lista.length}</div><div class="r">Tipos de objeção</div></div>
+      <div class="kpi"><div class="n">${lista.reduce((s, o) => s + o.total, 0)}</div><div class="r">Total detectado</div></div>
+    </div>
+    <div class="card" style="cursor:default">
+      ${lista.map((o) => `
+        <div class="barra">
+          <div class="nome">${esc(o.categoria)}</div>
+          <div class="trilho"><div class="cheio" style="width:${(o.total / max) * 100}%"></div></div>
+          <div class="v">${o.total}</div>
+        </div>`).join("")}
+    </div>`;
+}
+
+async function abrir(id) {
+  const c = await (await fetch(`/api/calls/${id}`)).json();
+  const r = c.resumo;
+  document.getElementById("d-titulo").textContent = fmtData(c.iniciadaEm) + " · " + fmtDur(c.duracaoMs);
+
+  document.getElementById("d-corpo").innerHTML = `
+    ${r ? `
+      <div class="bloco"><h4>Resumo</h4><p>${esc(r.resumo)}</p></div>
+      ${r.perfil ? `<div class="bloco"><h4>Perfil do lead</h4><p>${esc(r.perfil)}</p></div>` : ""}
+      ${r.proximoPasso ? `<div class="bloco"><h4>Próximo passo</h4><p><strong>${esc(r.proximoPasso)}</strong></p></div>` : ""}
+      ${r.objecoes?.length ? `<div class="bloco"><h4>Objeções</h4><ul>${r.objecoes.map((o) => `<li>${esc(o)}</li>`).join("")}</ul></div>` : ""}
+      ${r.oQueFuncionou ? `<div class="bloco"><h4>O que funcionou</h4><p>${esc(r.oQueFuncionou)}</p></div>` : ""}
+      ${r.oQueMelhorar ? `<div class="bloco"><h4>O que melhorar</h4><p>${esc(r.oQueMelhorar)}</p></div>` : ""}
+    ` : `<div class="bloco"><p style="color:#667085">Sem resumo — a análise por IA estava desligada nesta call.</p></div>`}
+
+    ${c.deteccoes?.length ? `<div class="bloco"><h4>Detecções ao vivo</h4>
+      ${c.deteccoes.map((d) => `<div class="turno">
+        <span class="quem">${esc(d.categoria)} · ${d.fonte} · ${d.latenciaMs ?? "?"}ms</span>
+        ${esc(d.resposta)}
+      </div>`).join("")}
+    </div>` : ""}
+
+    <div class="bloco"><h4>Transcrição (${c.totalTurnos} turnos)</h4>
+      ${(c.turnos ?? []).map((t) => `<div class="turno ${t.falante}">
+        <span class="quem">${t.falante === "lead" ? "Lead" : "Closer"}</span>${esc(t.texto)}
+      </div>`).join("")}
+    </div>`;
+
+  detalhe.showModal();
+}
+
+carregarCalls();
+carregarObjecoes();
+setInterval(() => { if (!detalhe.open) { carregarCalls(); carregarObjecoes(); } }, 10000);
+</script>
+</html>

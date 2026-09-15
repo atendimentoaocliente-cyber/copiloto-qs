@@ -1,0 +1,52 @@
+{
+  "manifest_version": 3,
+  "name": "Copiloto QS",
+  "version": "2.0.0",
+  "description": "Transcrição em tempo real e sugestão de resposta durante calls de venda.",
+  "minimum_chrome_version": "116",
+  "permissions": [
+    "tabCapture",
+    "offscreen",
+    "activeTab",
+    "scripting"
+  ],
+  "background": {
+    "service_worker": "background.js",
+    "type": "module"
+  },
+  "action": {
+    "default_title": "Copiloto QS — clique para ativar nesta aba"
+  },
+  "web_accessible_resources": [
+    {
+      "resources": [
+        "pcm-worklet.js",
+        "auto-captura.js",
+        "vigia-tela.js"
+      ],
+      "matches": [
+        "https://meet.google.com/*"
+      ]
+    }
+  ],
+  "commands": {
+    "_execute_action": {
+      "suggested_key": {
+        "default": "Ctrl+Shift+K",
+        "mac": "Command+Shift+K"
+      },
+      "description": "Ativar o Copiloto nesta call"
+    }
+  },
+  "content_scripts": [
+    {
+      "matches": [
+        "https://meet.google.com/*"
+      ],
+      "js": [
+        "content.js"
+      ],
+      "run_at": "document_idle"
+    }
+  ]
+}

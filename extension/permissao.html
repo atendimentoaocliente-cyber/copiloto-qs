@@ -1,0 +1,31 @@
+<!doctype html>
+<meta charset="utf-8" />
+<title>Copiloto QS — liberar microfone</title>
+<style>
+  body {
+    font: 15px/1.6 system-ui, -apple-system, sans-serif;
+    max-width: 440px;
+    margin: 64px auto;
+    padding: 0 24px;
+    color: #0D1B4B;
+  }
+  h1 { font-size: 20px; margin-bottom: 8px; }
+  p { color: #475467; }
+  button {
+    margin-top: 20px; padding: 12px 20px; border: none; border-radius: 8px;
+    background: #1A55FF; color: #fff; font: 600 15px system-ui; cursor: pointer;
+  }
+  #resultado { margin-top: 16px; font-weight: 600; }
+  .ok { color: #067647; }
+  .erro { color: #B42318; }
+</style>
+
+<h1>Liberar o microfone</h1>
+<p>
+  O copiloto precisa ouvir a sua voz para separar o que você falou do que o lead
+  falou. Clique abaixo e autorize. Isso é pedido uma única vez.
+</p>
+<button id="pedir">Autorizar microfone</button>
+<div id="resultado"></div>
+
+<script src="permissao.js"></script>

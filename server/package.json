@@ -1,0 +1,20 @@
+{
+  "name": "qs-copilot-spike-server",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "node --env-file=.env src/index.js",
+    "probe": "node --env-file=.env scripts/probe-deepgram.js",
+    "teste": "node --env-file=.env scripts/teste-frases.js",
+    "teste:e2e": "node --env-file=.env scripts/teste-e2e.js",
+    "simular": "node --env-file=.env scripts/simular-call.js"
+  },
+  "dependencies": {
+    "@anthropic-ai/sdk": "^0.125.0",
+    "@fastify/static": "^8.3.0",
+    "@fastify/websocket": "^11.0.1",
+    "fastify": "^5.2.0",
+    "ws": "^8.18.0"
+  }
+}

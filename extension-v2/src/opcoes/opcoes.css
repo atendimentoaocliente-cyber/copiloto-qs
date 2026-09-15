@@ -1,0 +1,52 @@
+:root {
+  --marinho: #0D1B4B;
+  --azul: #1A55FF;
+  --cinza-escuro: #3D4766;
+  --cinza-medio: #5B6478;
+  --borda: #DDE2EC;
+  --fundo: #F5F7FB;
+  --ok: #067647;
+  --ambar: #C2410C;
+}
+* { box-sizing: border-box; }
+body {
+  margin: 0; background: var(--fundo); color: var(--marinho);
+  font: 15px/1.55 "BDO Grotesk", Inter, system-ui, -apple-system, "Segoe UI", sans-serif;
+  -webkit-font-smoothing: antialiased;
+}
+main { max-width: 640px; margin: 0 auto; padding: 40px 24px 64px; display: flex; flex-direction: column; gap: 16px; }
+.topo { display: flex; align-items: center; gap: 14px; margin-bottom: 8px; }
+.marca { width: 44px; height: 44px; border-radius: 10px; background: linear-gradient(135deg, #0D1B4B, #1A55FF 60%, #2E6BFF); }
+h1 { margin: 0; font-size: 22px; font-weight: 700; }
+.sub { margin: 0; color: var(--cinza-medio); font-size: 13px; }
+h2 { margin: 0 0 8px; font-size: 16px; font-weight: 600; }
+p { margin: 6px 0; }
+.cartao { background: #fff; border: 1px solid rgba(13,27,75,.06); box-shadow: 0 1px 3px rgba(0,0,0,.04); border-radius: 12px; padding: 20px 22px; }
+details.cartao summary { cursor: pointer; font-weight: 600; }
+.fraca { color: var(--cinza-medio); font-size: 13px; }
+.ok { color: var(--ok); }
+.erro { color: var(--ambar); }
+.etiqueta { display: inline-block; padding: 1px 8px; border-radius: 999px; background: #EEF1F7; color: var(--cinza-escuro); font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: .06em; vertical-align: middle; }
+.linha { display: flex; gap: 8px; align-items: center; margin-top: 10px; flex-wrap: wrap; }
+input[type="text"], input[type="url"], #codigo {
+  height: 42px; padding: 0 12px; border: 1px solid var(--borda); border-radius: 8px; font: inherit; color: var(--marinho); background: #fff;
+}
+#codigo { width: 160px; font: 600 24px/1 ui-monospace, SFMono-Regular, Menlo, monospace; letter-spacing: .3em; text-align: center; }
+#gateway { flex: 1; min-width: 240px; }
+.btn { height: 42px; padding: 0 16px; border-radius: 8px; border: 1px solid var(--borda); background: #fff; color: var(--cinza-escuro); font: 600 14px inherit; font-family: inherit; cursor: pointer; }
+.btn:hover { background: #EEF1F7; }
+.btn.primario { background: var(--marinho); color: #fff; border-color: var(--marinho); }
+.btn.primario:hover { background: #16276A; }
+.btn:disabled { opacity: .5; cursor: default; }
+.acoes { display: flex; gap: 10px; align-items: center; margin-top: 10px; flex-wrap: wrap; }
+.resultado { font-weight: 600; font-size: 14px; min-height: 20px; }
+.atalhos { border-collapse: collapse; width: 100%; margin-top: 6px; }
+.atalhos td { padding: 6px 0; border-bottom: 1px solid #EEF1F7; vertical-align: top; font-size: 14px; }
+.atalhos td:first-child { width: 46%; white-space: nowrap; }
+kbd { display: inline-block; padding: 2px 8px; border: 1px solid var(--borda); border-bottom-width: 2px; border-radius: 6px; background: #F8FAFC; font: 600 12px ui-monospace, SFMono-Regular, Menlo, monospace; color: var(--marinho); }
+code { font: 13px ui-monospace, SFMono-Regular, Menlo, monospace; color: var(--cinza-escuro); }
+.opcao { display: flex; gap: 10px; align-items: flex-start; padding: 8px 0; cursor: pointer; }
+.opcao input { margin-top: 4px; }
+.opcao small { display: block; color: var(--cinza-medio); font-size: 12px; }
+footer { margin-top: 8px; }
+[hidden] { display: none !important; }
